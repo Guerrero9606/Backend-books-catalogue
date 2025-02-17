@@ -1,4 +1,4 @@
-package com.unir.products.data.utils;
+package com.unir.catalogue.data.utils;
 
 public enum SearchOperation {
     GREATER_THAN,

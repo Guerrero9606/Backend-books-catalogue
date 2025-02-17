@@ -8,9 +8,9 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.unir</groupId>
-	<artifactId>inventory-products</artifactId>
+	<artifactId>books-catalogue</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>products</name>
+	<name>books</name>
 	<description>Aplicación que gestiona los productos de una tienda</description>
 	<properties>
 		<java.version>21</java.version>
@@ -59,6 +59,11 @@
 			<groupId>com.github.java-json-tools</groupId>
 			<artifactId>json-patch</artifactId>
 			<version>1.13</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jsr310</artifactId>
+			<version>2.18.2</version>
 		</dependency>
 	</dependencies>
 	<dependencyManagement>
