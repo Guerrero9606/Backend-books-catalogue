@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.time.LocalDate;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -19,7 +20,7 @@ public class CreateBookRequest {
 	private String author;
 
 	// Fecha de publicación del libro
-	private LocalDate publication_Date;
+	private Date publication_Date;
 
 	// Categoría del libro (por ejemplo: "Ficción", "No Ficción", "Ciencia", etc.)
 	private String category;
@@ -32,5 +33,11 @@ public class CreateBookRequest {
 
 	// Indica si el libro es visible en el catálogo
 	private Boolean visible;
-}
 
+	// Precio del libro
+	private Double price;
+
+	// URL del cover del libro
+	private String url;
+
+}

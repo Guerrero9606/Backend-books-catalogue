@@ -2,6 +2,7 @@ package com.unir.catalogue.controller.model;
 
 import lombok.*;
 import java.time.LocalDate;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -13,9 +14,11 @@ public class BookDto {
 
 	private String title;
 	private String author;
-	private LocalDate publication_Date;
+	private Date publication_Date;
 	private String category;
 	private String isbn;
 	private Integer rating;
 	private Boolean visible;
+	private Double price;
+	private String url;
 }

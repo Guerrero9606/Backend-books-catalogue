@@ -10,5 +10,7 @@ public class Consts {
     public static final String ISBN = "isbn";
     public static final String RATING = "rating";
     public static final String VISIBLE = "visible";
+    public static final String PRICE = "price";
+    public static final String URL = "url";
 }
 

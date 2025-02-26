@@ -8,7 +8,7 @@ import com.unir.catalogue.controller.model.CreateBookRequest;
 
 public interface BooksService {
 
-	List<Book> getBooks(String title, String author, Boolean visible, String isbn);
+	List<Book> getBooks(String title, String author, Boolean visible, String isbn, Double price);
 
 	Book getBook(String bookId);
 

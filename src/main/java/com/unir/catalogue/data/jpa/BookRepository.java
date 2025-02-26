@@ -1,4 +1,4 @@
-package com.unir.catalogue.data;
+package com.unir.catalogue.data.jpa;
 
 import com.unir.catalogue.data.utils.Consts;
 import com.unir.catalogue.data.utils.SearchCriteria;
@@ -33,7 +33,7 @@ public class BookRepository {
         repository.delete(book);
     }
 
-    public List<Book> search(String title, String author, Boolean visible, String isbn) {
+    public List<Book> search(String title, String author, Boolean visible, String isbn, Double price) {
         SearchCriteria<Book> spec = new SearchCriteria<>();
 
         if (StringUtils.isNotBlank(title)) {
@@ -50,6 +50,10 @@ public class BookRepository {
 
         if (StringUtils.isNotBlank(isbn)) {
             spec.add(new SearchStatement(Consts.ISBN, isbn, SearchOperation.MATCH));
+        }
+
+        if (price != null) {
+            spec.add(new SearchStatement(Consts.PRICE, price, SearchOperation.EQUAL));  // Cambiar a 'price'
         }
 
         return repository.findAll(spec);

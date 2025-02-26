@@ -15,12 +15,17 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-
 import java.time.LocalDate;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
+import org.springframework.data.elasticsearch.annotations.DateFormat;
+import java.util.Date;
+
 
 @Entity
 @Table(name = "books")
+@Document(indexName = "books") // Asegura que el índice se cree en minúsculas
 @Getter
 @Setter
 @AllArgsConstructor
@@ -39,9 +44,10 @@ public class Book {
 	@Column(name = Consts.AUTHOR, nullable = false)
 	private String author;
 
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+	@Field(type = FieldType.Date, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	@Column(name = Consts.PUBLICATION_DATE)
-	private LocalDate publication_Date;
+	private Date publication_Date;
 
 	@Column(name = Consts.CATEGORY)
 	private String category;
@@ -55,6 +61,14 @@ public class Book {
 	@Column(name = Consts.VISIBLE)
 	private Boolean visible;
 
+	// Nuevo campo para el precio
+	@Column(name = Consts.PRICE)
+	private Double price;
+
+	// Nuevo campo para la URL del cover
+	@Column(name = Consts.URL)
+	private String url;
+
 	public void update(BookDto bookDto) {
 		this.title = bookDto.getTitle();
 		this.author = bookDto.getAuthor();
@@ -63,5 +77,7 @@ public class Book {
 		this.isbn = bookDto.getIsbn();
 		this.rating = bookDto.getRating();
 		this.visible = bookDto.getVisible();
+		this.price = bookDto.getPrice();
+		this.url = bookDto.getUrl();
 	}
 }

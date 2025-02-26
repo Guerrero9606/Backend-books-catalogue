@@ -1,4 +1,4 @@
-package com.unir.catalogue.data;
+package com.unir.catalogue.data.jpa;
 
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,4 +16,13 @@ public interface BookJpaRepository extends JpaRepository<Book, Long>, JpaSpecifi
 	List<Book> findByTitleAndAuthor(String title, String author);
 
 	List<Book> findByIsbn(String isbn);
+
+	// Nuevos métodos para buscar por precio
+	List<Book> findByPrice(Double price);
+
+	List<Book> findByPriceGreaterThan(Double price);
+
+	List<Book> findByPriceLessThan(Double price);
+
+	List<Book> findByPriceBetween(Double minPrice, Double maxPrice);
 }

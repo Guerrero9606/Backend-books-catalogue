@@ -1,26 +1,30 @@
-## Configuracion de Spring
+## Configuración de Spring
 spring:
+  main:
+    web-application-type: servlet
   application:
     name: ms-books-catalogue
   datasource:
-    url: jdbc:h2:mem:testdb;Mode=MySQL
+    url: jdbc:postgresql://localhost:5432/catalogue
+    username: books
+    password: books123
+    driver-class-name: org.postgresql.Driver
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: create-drop
-    defer-datasource-initialization: true
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
-      settings:
-        web-allow-others: true
+      ddl-auto: update
+  elasticsearch:
+    rest:
+      uris: http://localhost:9200
+    client:
+      reactive:
+          enabled: false
 
-## Configuracion de Instancia 
+## Configuración de Instancia
 server:
   port: 8088
 
-## Configuracion del cliente de Eureka
+## Configuración del cliente de Eureka
 eureka:
   client:
     service-url:
@@ -28,3 +32,4 @@ eureka:
   instance:
     preferIpAddress: true
     hostname: ms-books-catalogue
+
