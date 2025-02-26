@@ -1,18 +1,16 @@
 package com.unir.catalogue.controller;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import com.unir.catalogue.controller.model.BookDto;
 import com.unir.catalogue.controller.model.CreateBookRequest;
-import com.unir.catalogue.data.elasticsearch.FacetResult;
+import com.unir.catalogue.data.elasticsearch.SearchResponse;
 import com.unir.catalogue.data.model.Book;
 import com.unir.catalogue.data.elasticsearch.BookElasticRepository;
 import com.unir.catalogue.service.BooksService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -36,31 +34,25 @@ public class BooksController {
     @GetMapping("/books")
     @Operation(
             operationId = "Obtener libros",
-            description = "Operación de lectura. Se consulta el índice de Elasticsearch para obtener los libros, con opción de incluir facetas.",
-            summary = "Devuelve una lista de libros o un objeto con libros y facetas, según el parámetro 'facets'.")
+            description = "Consulta el índice de Elasticsearch para obtener los libros. Si 'facets' es true, se devuelven también las facetas.",
+            summary = "Devuelve una lista de libros y, opcionalmente, facetas."
+    )
     @ApiResponse(
             responseCode = "200",
-            content = @Content(mediaType = "application/json", schema = @Schema(oneOf = {Book.class, FacetResult.class})))
+            content = @Content(mediaType = "application/json", schema = @Schema(oneOf = {Book.class, SearchResponse.class}))
+    )
     public ResponseEntity<?> getBooks(
             @RequestHeader Map<String, String> headers,
-            @Parameter(name = "title", description = "Título del libro (no necesariamente exacto).", example = "El Quijote", required = false)
             @RequestParam(required = false) String title,
-            @Parameter(name = "author", description = "Autor del libro.", example = "Cervantes", required = false)
             @RequestParam(required = false) String author,
-            @Parameter(name = "visible", description = "Estado del libro: true o false.", example = "true", required = false)
             @RequestParam(required = false) Boolean visible,
-            @Parameter(name = "isbn", description = "ISBN del libro.", example = "9780307389732", required = false)
             @RequestParam(required = false) String isbn,
-            @Parameter(name = "price", description = "Precio del libro.", example = "19.99", required = false)
             @RequestParam(required = false) Double price,
-            @Parameter(name = "facets", description = "Si es true, se incluyen facetas en la respuesta.", required = false)
             @RequestParam(required = false, defaultValue = "false") Boolean facets) {
 
-        log.info("Headers: {}", headers);
         if (facets) {
-            // Llamamos al método que devuelve resultados con facetas
-            FacetResult facetResult = bookElasticRepository.searchBooksWithFacets(title, author, visible, isbn, price);
-            return ResponseEntity.ok(facetResult);
+            SearchResponse response = bookElasticRepository.searchWithFacets(title, author, visible, isbn, price);
+            return ResponseEntity.ok(response);
         } else {
             List<Book> books;
             if (title != null || author != null || visible != null || isbn != null || price != null) {
@@ -68,7 +60,7 @@ public class BooksController {
             } else {
                 books = bookElasticRepository.getBooks();
             }
-            return ResponseEntity.ok(books != null ? books : Collections.emptyList());
+            return ResponseEntity.ok(books != null ? books : List.of());
         }
     }
 
