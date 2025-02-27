@@ -34,12 +34,13 @@ public class BooksController {
     @GetMapping("/books")
     @Operation(
             operationId = "Obtener libros",
-            description = "Consulta el índice de Elasticsearch para obtener los libros. Si 'facets' es true, se devuelven también las facetas.",
+            description = "Consulta el índice de Elasticsearch para obtener los libros. Si 'facets' es true, se devuelven también las facetas. Además, se puede filtrar por una categoría específica mediante 'selectedCategory'.",
             summary = "Devuelve una lista de libros y, opcionalmente, facetas."
     )
     @ApiResponse(
             responseCode = "200",
-            content = @Content(mediaType = "application/json", schema = @Schema(oneOf = {Book.class, SearchResponse.class}))
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(oneOf = {Book.class, SearchResponse.class}))
     )
     public ResponseEntity<?> getBooks(
             @RequestHeader Map<String, String> headers,
@@ -48,10 +49,13 @@ public class BooksController {
             @RequestParam(required = false) Boolean visible,
             @RequestParam(required = false) String isbn,
             @RequestParam(required = false) Double price,
-            @RequestParam(required = false, defaultValue = "false") Boolean facets) {
+            @RequestParam(required = false, defaultValue = "false") Boolean facets,
+            @RequestParam(required = false) String selectedCategory) {
 
+        log.info("Headers: {}", headers);
         if (facets) {
-            SearchResponse response = bookElasticRepository.searchWithFacets(title, author, visible, isbn, price);
+            // Llama al método extendido que recibe el parámetro selectedCategory.
+            SearchResponse response = bookElasticRepository.searchWithFacets(title, author, visible, isbn, price, selectedCategory);
             return ResponseEntity.ok(response);
         } else {
             List<Book> books;

@@ -1,24 +1,26 @@
 ## Configuración de Spring
 spring:
-  main:
-    web-application-type: servlet
   application:
     name: ms-books-catalogue
   datasource:
-    url: jdbc:postgresql://localhost:5432/catalogue
-    username: books
-    password: books123
+    url: jdbc:postgresql://${DATABASE_HOST:localhost}:5432/catalogue
+    username: ${DATABASE_USERNAME:books}
+    password: ${DATABASE_PASSWORD:books123}
     driver-class-name: org.postgresql.Driver
   jpa:
     show-sql: true
     hibernate:
       ddl-auto: update
   elasticsearch:
-    rest:
-      uris: http://localhost:9200
     client:
       reactive:
-          enabled: false
+        enabled: false
+
+# Propiedades personalizadas para la conexión a Elasticsearch
+elasticsearch:
+  host: ${ELASTICSEARCH_HOST:localhost}
+  port: ${ELASTICSEARCH_PORT:9200}
+  scheme: ${ELASTICSEARCH_SCHEME:http}
 
 ## Configuración de Instancia
 server:
@@ -32,4 +34,3 @@ eureka:
   instance:
     preferIpAddress: true
     hostname: ms-books-catalogue
-

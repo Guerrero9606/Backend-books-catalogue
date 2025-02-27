@@ -67,8 +67,8 @@ public class BookElasticRepository {
                 .collect(Collectors.toList());
     }
 
-    // Método para búsqueda con facetas que retorna tanto documentos como facetas
-    public SearchResponse searchWithFacets(String title, String author, Boolean visible, String isbn, Double price) {
+    // Método para búsqueda con facetas que también permite filtrar por una categoría seleccionada
+    public SearchResponse searchWithFacets(String title, String author, Boolean visible, String isbn, Double price, String selectedCategory) {
         BoolQueryBuilder query = QueryBuilders.boolQuery();
         if (StringUtils.isNotBlank(title)) {
             query.must(QueryBuilders.matchQuery("title", title));
@@ -85,11 +85,18 @@ public class BookElasticRepository {
         if (price != null) {
             query.filter(QueryBuilders.termQuery("price", price));
         }
+        // Si se ha seleccionado una categoría, agregamos un filtro para esa faceta
+        if (StringUtils.isNotBlank(selectedCategory)) {
+            query.filter(QueryBuilders.termQuery("category.keyword", selectedCategory));
+        }
 
         NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(query)
+                // Agregación para agrupar por categoría (si se requiere calcular todas las categorías)
                 .addAggregation(AggregationBuilders.terms("categoryFacet").field("category.keyword"))
+                // Agregación para agrupar por autor
                 .addAggregation(AggregationBuilders.terms("authorFacet").field("author.keyword"))
+                // Agregación para rangos de precio
                 .addAggregation(AggregationBuilders.range("priceRangeFacet")
                         .field("price")
                         .addRange(0, 10)
@@ -105,7 +112,7 @@ public class BookElasticRepository {
 
         Aggregations aggregations = searchHits.getAggregations();
 
-        // Procesar agregación de categoría
+        // Procesar la agregación de categoría
         Map<String, Long> categoryFacets = new HashMap<>();
         Terms categoryTerms = aggregations.get("categoryFacet");
         if (categoryTerms != null) {
@@ -117,7 +124,7 @@ public class BookElasticRepository {
                     ));
         }
 
-        // Procesar agregación de autor
+        // Procesar la agregación de autor
         Map<String, Long> authorFacets = new HashMap<>();
         Terms authorTerms = aggregations.get("authorFacet");
         if (authorTerms != null) {
@@ -129,7 +136,7 @@ public class BookElasticRepository {
                     ));
         }
 
-        // Procesar agregación de rango de precio
+        // Procesar la agregación de rango de precio
         Map<String, Long> priceRangeFacets = new HashMap<>();
         Range priceRange = aggregations.get("priceRangeFacet");
         if (priceRange != null) {
@@ -148,7 +155,7 @@ public class BookElasticRepository {
         facetResult.setPriceRangeFacets(priceRangeFacets);
         facetResult.setTotalResults(searchHits.getTotalHits());
 
-        // Construir y retornar el SearchResponse con ambos resultados
+        // Construir y retornar el SearchResponse que incluye los documentos y las facetas
         SearchResponse response = new SearchResponse();
         response.setBooks(books);
         response.setFacets(facetResult);
