@@ -50,12 +50,13 @@ public class BooksController {
             @RequestParam(required = false) String isbn,
             @RequestParam(required = false) Double price,
             @RequestParam(required = false, defaultValue = "false") Boolean facets,
-            @RequestParam(required = false) String selectedCategory) {
+            @RequestParam(required = false) String selectedCategory,
+            @RequestParam(required = false) String selectedPriceRange) {
 
         log.info("Headers: {}", headers);
         if (facets) {
             // Llama al método extendido que recibe el parámetro selectedCategory.
-            SearchResponse response = bookElasticRepository.searchWithFacets(title, author, visible, isbn, price, selectedCategory);
+            SearchResponse response = bookElasticRepository.searchWithFacets(title, author, visible, isbn, price, selectedCategory, selectedPriceRange);
             return ResponseEntity.ok(response);
         } else {
             List<Book> books;
